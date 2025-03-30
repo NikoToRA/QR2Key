@@ -6,81 +6,88 @@
 
 {% block content %}
 <div class="container">
-    <div class="prediction-form">
-        <!-- 日付入力（中央配置） -->
-        <div class="form-group date-group">
-            <label for="prediction-date">予測日</label>
-            <input type="date" id="prediction-date" class="form-control" required>
-            <div class="date-display">
-                <span id="weekday-display"></span>
-            </div>
-        </div>
-
-        <!-- 2列レイアウト用のグリッドコンテナ -->
-        <div class="input-grid">
-            <!-- 左列 -->
-            <div class="form-group">
-                <label for="intro-outpatient">前日紹介患者数</label>
-                <div class="input-wrapper">
-                    <input type="number" id="intro-outpatient" class="form-control" value="30" required>
-                    <div class="input-controls">
-                        <button type="button" class="increment-btn" onclick="incrementValue('intro-outpatient')">+</button>
-                        <button type="button" class="decrement-btn" onclick="decrementValue('intro-outpatient')">-</button>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="prediction-form">
+                <!-- 日付入力（中央配置） -->
+                <div class="form-group date-group">
+                    <label for="prediction-date">予測日</label>
+                    <input type="date" id="prediction-date" class="form-control" required>
+                    <div class="date-display">
+                        <span id="weekday-display"></span>
                     </div>
+                </div>
+
+                <!-- 2列レイアウト用のグリッドコンテナ -->
+                <div class="input-grid">
+                    <!-- 左列 -->
+                    <div class="form-group">
+                        <label for="intro-outpatient">前日紹介患者数</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="intro-outpatient" class="form-control" value="30" required>
+                            <div class="input-controls">
+                                <button type="button" class="increment-btn" onclick="incrementValue('intro-outpatient')">+</button>
+                                <button type="button" class="decrement-btn" onclick="decrementValue('intro-outpatient')">-</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="total-outpatient">前日外来患者数</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="total-outpatient" class="form-control" value="600" required>
+                            <div class="input-controls">
+                                <button type="button" class="increment-btn" onclick="incrementValue('total-outpatient')">+</button>
+                                <button type="button" class="decrement-btn" onclick="decrementValue('total-outpatient')">-</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右列 -->
+                    <div class="form-group">
+                        <label for="er-patients">前日救急搬送患者数</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="er-patients" class="form-control" value="20" required>
+                            <div class="input-controls">
+                                <button type="button" class="increment-btn" onclick="incrementValue('er-patients')">+</button>
+                                <button type="button" class="decrement-btn" onclick="decrementValue('er-patients')">-</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bed-count">現在の入院患者数</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="bed-count" class="form-control" value="300" required>
+                            <div class="input-controls">
+                                <button type="button" class="increment-btn" onclick="incrementValue('bed-count')">+</button>
+                                <button type="button" class="decrement-btn" onclick="decrementValue('bed-count')">-</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 予測ボタン（中央配置） -->
+                <div class="form-group button-group">
+                    <button id="predict-button" class="btn btn-primary">予測実行</button>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="total-outpatient">前日外来患者数</label>
-                <div class="input-wrapper">
-                    <input type="number" id="total-outpatient" class="form-control" value="600" required>
-                    <div class="input-controls">
-                        <button type="button" class="increment-btn" onclick="incrementValue('total-outpatient')">+</button>
-                        <button type="button" class="decrement-btn" onclick="decrementValue('total-outpatient')">-</button>
+            <div id="prediction-result" class="mt-4" style="display: none;">
+                <h3>予測結果</h3>
+                <div class="result-content">
+                    <div class="result-card">
+                        <h4>当日の予測入院患者数</h4>
+                        <div id="daily-prediction" class="prediction-value">-</div>
+                        <div class="text-danger small mt-2">
+                            <i class="fas fa-info-circle"></i> 当日予測は週間予測よりも精度が高い予測値を提供します
+                        </div>
+                    </div>
+                    <div class="result-card">
+                        <h4>週間予測</h4>
+                        <div id="weekly-prediction-chart" style="width: 100%; height: 400px;"></div>
                     </div>
                 </div>
-            </div>
-
-            <!-- 右列 -->
-            <div class="form-group">
-                <label for="er-patients">前日救急搬送患者数</label>
-                <div class="input-wrapper">
-                    <input type="number" id="er-patients" class="form-control" value="20" required>
-                    <div class="input-controls">
-                        <button type="button" class="increment-btn" onclick="incrementValue('er-patients')">+</button>
-                        <button type="button" class="decrement-btn" onclick="decrementValue('er-patients')">-</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="bed-count">現在の入院患者数</label>
-                <div class="input-wrapper">
-                    <input type="number" id="bed-count" class="form-control" value="300" required>
-                    <div class="input-controls">
-                        <button type="button" class="increment-btn" onclick="incrementValue('bed-count')">+</button>
-                        <button type="button" class="decrement-btn" onclick="decrementValue('bed-count')">-</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 予測ボタン（中央配置） -->
-        <div class="form-group button-group">
-            <button id="predict-button" class="btn btn-primary">予測実行</button>
-        </div>
-    </div>
-
-    <div id="prediction-result" class="mt-4" style="display: none;">
-        <h3>予測結果</h3>
-        <div class="result-content">
-            <div class="result-card">
-                <h4>当日の予測入院患者数</h4>
-                <div id="daily-prediction" class="prediction-value">-</div>
-            </div>
-            <div class="result-card">
-                <h4>週間予測</h4>
-                <div id="weekly-prediction-chart" style="width: 100%; height: 400px;"></div>
             </div>
         </div>
     </div>
