@@ -44,13 +44,13 @@ jobs:
         copy config.json dist\
 
     - name: Upload executable
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: ${{ matrix.output-name }}
         path: dist\${{ matrix.output-name }}
 
     - name: Upload config.json
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: config-${{ matrix.architecture }}
         path: dist\config.json
@@ -60,7 +60,7 @@ jobs:
     runs-on: windows-2022
     steps:
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v3.1.2
       with:
         path: artifacts
 
@@ -79,13 +79,13 @@ jobs:
         Compress-Archive -Path QR2Key_x64 -DestinationPath QR2Key_x64.zip
 
     - name: Upload x86 package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: QR2Key_x86_package
         path: QR2Key_x86.zip
 
     - name: Upload x64 package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: QR2Key_x64_package
         path: QR2Key_x64.zip
