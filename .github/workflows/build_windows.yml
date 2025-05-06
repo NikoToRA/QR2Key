@@ -34,7 +34,7 @@ jobs:
         pyinstaller --clean --add-data "README.md;." --onefile --name "QR2Key-${{ matrix.architecture }}" --target-architecture ${{ matrix.architecture }} qr2key/main.py
         
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: QR2Key-${{ matrix.architecture }}
         path: dist/QR2Key-${{ matrix.architecture }}.exe
