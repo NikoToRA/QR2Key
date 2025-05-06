@@ -1,0 +1,89 @@
+name: Build Windows Executables
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        architecture: [x86, x64]
+        include:
+          - architecture: x86
+            python-architecture: x86
+            output-name: QR2Key_x86.exe
+          - architecture: x64
+            python-architecture: x64
+            output-name: QR2Key_x64.exe
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        architecture: ${{ matrix.python-architecture }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyserial loguru pywin32 keyboard pyinstaller
+
+    - name: Build executable
+      run: |
+        pyinstaller --onefile --name ${{ matrix.output-name }} src/qr2key.py
+
+    - name: Copy config.json to dist directory
+      run: |
+        copy config.json dist\
+
+    - name: Upload executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.output-name }}
+        path: dist/${{ matrix.output-name }}
+
+    - name: Upload config.json
+      uses: actions/upload-artifact@v3
+      with:
+        name: config-${{ matrix.architecture }}
+        path: dist/config.json
+
+  package:
+    needs: build
+    runs-on: windows-2022
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Create x86 package
+      run: |
+        mkdir -p QR2Key_x86
+        move QR2Key_x86.exe\QR2Key_x86.exe QR2Key_x86\
+        move config-x86\config.json QR2Key_x86\
+        Compress-Archive -Path QR2Key_x86 -DestinationPath QR2Key_x86.zip
+
+    - name: Create x64 package
+      run: |
+        mkdir -p QR2Key_x64
+        move QR2Key_x64.exe\QR2Key_x64.exe QR2Key_x64\
+        move config-x64\config.json QR2Key_x64\
+        Compress-Archive -Path QR2Key_x64 -DestinationPath QR2Key_x64.zip
+
+    - name: Upload x86 package
+      uses: actions/upload-artifact@v3
+      with:
+        name: QR2Key_x86_package
+        path: QR2Key_x86.zip
+
+    - name: Upload x64 package
+      uses: actions/upload-artifact@v3
+      with:
+        name: QR2Key_x64_package
+        path: QR2Key_x64.zip

@@ -1,0 +1,6 @@
+{
+    "port": null,
+    "baud": 9600,
+    "buffer_ms": 50,
+    "ime_off": true
+}
