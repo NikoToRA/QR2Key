@@ -47,13 +47,13 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.output-name }}
-        path: dist/${{ matrix.output-name }}
+        path: dist\${{ matrix.output-name }}
 
     - name: Upload config.json
       uses: actions/upload-artifact@v3
       with:
         name: config-${{ matrix.architecture }}
-        path: dist/config.json
+        path: dist\config.json
 
   package:
     needs: build
@@ -61,19 +61,21 @@ jobs:
     steps:
     - name: Download all artifacts
       uses: actions/download-artifact@v3
+      with:
+        path: artifacts
 
     - name: Create x86 package
       run: |
         mkdir -p QR2Key_x86
-        move QR2Key_x86.exe\QR2Key_x86.exe QR2Key_x86\
-        move config-x86\config.json QR2Key_x86\
+        move artifacts\QR2Key_x86.exe\QR2Key_x86.exe QR2Key_x86\
+        move artifacts\config-x86\config.json QR2Key_x86\
         Compress-Archive -Path QR2Key_x86 -DestinationPath QR2Key_x86.zip
 
     - name: Create x64 package
       run: |
         mkdir -p QR2Key_x64
-        move QR2Key_x64.exe\QR2Key_x64.exe QR2Key_x64\
-        move config-x64\config.json QR2Key_x64\
+        move artifacts\QR2Key_x64.exe\QR2Key_x64.exe QR2Key_x64\
+        move artifacts\config-x64\config.json QR2Key_x64\
         Compress-Archive -Path QR2Key_x64 -DestinationPath QR2Key_x64.zip
 
     - name: Upload x86 package
